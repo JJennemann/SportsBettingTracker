@@ -68,7 +68,7 @@ export default function App() {
     setShowAddBet(!showAddBet);
     setShowAddBettor(false);
     setShowAddPayment(false);
-    setSelectedBettor(bettor);
+    setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
   }
 
   return (
@@ -87,6 +87,7 @@ export default function App() {
               onShowAddBet={handleShowAddBet}
               showAddBet={showAddBet}
               showAddPayment={showAddPayment}
+              selectedBettor={selectedBettor}
             />
 
             {showAddBettor && <FormAddBettor onAddBettor={handleAddBettor} />}
@@ -124,6 +125,7 @@ function BettorList({
   onShowAddPayment,
   showAddBet,
   showAddPayment,
+  selectedBettor,
 }) {
   return (
     <ul>
@@ -134,6 +136,7 @@ function BettorList({
           onShowAddBet={onShowAddBet}
           onShowAddPayment={onShowAddPayment}
           key={bettor.id}
+          selectedBettor={selectedBettor}
         />
       ))}
     </ul>
@@ -147,9 +150,11 @@ function Bettor({
   onShowAddBet,
   showAddPayment,
   showAddBet,
+  selectedBettor,
 }) {
+  const isSelected = selectedBettor?.id === bettor.id;
   return (
-    <li className="bettor">
+    <li className="bettor" id={isSelected ? "selected" : ""}>
       <div className="bettor-heading">
         <img className="avatar" src={bettor.avatar} alt={bettor.name} />
         <div className="bettor-name-record">
