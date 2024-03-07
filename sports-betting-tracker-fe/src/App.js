@@ -41,6 +41,7 @@ export default function App() {
   const [showBettorHistory, setShowBettorHistory] = useState(false);
   const [showAddPayment, setShowAddPayment] = useState(false);
   const [showAddBet, setShowAddBet] = useState(false);
+  const [selectedBettor, setSelectedBettor] = useState(null);
 
   function handleShowAddBettor() {
     setShowAddBettor((show) => !show);
@@ -63,10 +64,11 @@ export default function App() {
     setShowAddBet(false);
   }
 
-  function handleShowAddBet() {
+  function handleShowAddBet(bettor) {
     setShowAddBet(!showAddBet);
     setShowAddBettor(false);
     setShowAddPayment(false);
+    setSelectedBettor(bettor);
   }
 
   return (
@@ -100,7 +102,14 @@ export default function App() {
             ) : (
               ""
             )}
-            {showAddBet ? <FormAddBet onShowAddBet={handleShowAddBet} /> : ""}
+            {showAddBet ? (
+              <FormAddBet
+                onShowAddBet={handleShowAddBet}
+                selectedBettor={selectedBettor}
+              />
+            ) : (
+              ""
+            )}
           </div>
         </div>
       )}
@@ -188,7 +197,7 @@ function Bettor({
         </p>
       </div>
       <div className="bettor-buttons">
-        <Button onClick={() => onShowAddBet()}>Add Bet</Button>
+        <Button onClick={() => onShowAddBet(bettor)}>Add Bet</Button>
         <Button onClick={() => onShowAddPayment()}>Add Payment</Button>
         <Button onClick={() => onShowBettorHistory()}>Bettor History</Button>
       </div>
@@ -263,9 +272,12 @@ function FormAddPayment() {
   );
 }
 
-function FormAddBet() {
+function FormAddBet({ selectedBettor }) {
   return (
     <form className="form-add-new-bet">
+      <label className="form-add-new-bet-title">
+        Add Bet for {selectedBettor.name}
+      </label>
       <label>
         League
         <select>
