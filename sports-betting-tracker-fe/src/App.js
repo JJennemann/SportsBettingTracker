@@ -54,14 +54,16 @@ export default function App() {
     setShowAddBettor(!showBettorHistory);
   }
 
-  function handleShowBettorHistory() {
+  function handleShowBettorHistory(bettor) {
     setShowBettorHistory(!showBettorHistory);
+    // setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
   }
 
-  function handleShowAddPayment() {
+  function handleShowAddPayment(bettor) {
     setShowAddPayment(!showAddPayment);
     setShowAddBettor(false);
     setShowAddBet(false);
+    setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
   }
 
   function handleShowAddBet(bettor) {
@@ -99,7 +101,10 @@ export default function App() {
 
           <div className="forms">
             {showAddPayment ? (
-              <FormAddPayment onShowAddPayment={handleShowAddPayment} />
+              <FormAddPayment
+                onShowAddPayment={handleShowAddPayment}
+                selectedBettor={selectedBettor}
+              />
             ) : (
               ""
             )}
@@ -203,8 +208,10 @@ function Bettor({
       </div>
       <div className="bettor-buttons">
         <Button onClick={() => onShowAddBet(bettor)}>Add Bet</Button>
-        <Button onClick={() => onShowAddPayment()}>Add Payment</Button>
-        <Button onClick={() => onShowBettorHistory()}>Bettor History</Button>
+        <Button onClick={() => onShowAddPayment(bettor)}>Add Payment</Button>
+        <Button onClick={() => onShowBettorHistory(bettor)}>
+          Bettor History
+        </Button>
       </div>
     </li>
   );
@@ -259,10 +266,17 @@ function FormAddBettor({ onAddBettor }) {
   );
 }
 
-function FormAddPayment() {
+function FormAddPayment({ selectedBettor }) {
   return (
     <form className="form-edit-balance">
-      <p>Amount Owed: X</p>
+      <p>
+        Amount Owed by Bettor: $
+        {selectedBettor.currentBalance < 0 ? selectedBettor.currentBalance : 0}
+      </p>
+      <p>
+        Amount Owed to Bettor: $
+        {selectedBettor.currentBalance > 0 ? selectedBettor.currentBalance : 0}{" "}
+      </p>
       <select>
         <option>Payment from Bettor</option>
         <option>Payout to Bettor</option>
