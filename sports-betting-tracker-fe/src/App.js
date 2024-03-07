@@ -60,14 +60,21 @@ export default function App() {
   }
 
   function handleShowAddPayment(bettor) {
-    setShowAddPayment(!showAddPayment);
+    selectedBettor?.id === bettor?.id
+      ? setShowAddPayment(false)
+      : setShowAddPayment(true);
     setShowAddBettor(false);
     setShowAddBet(false);
     setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
   }
 
   function handleShowAddBet(bettor) {
-    setShowAddBet(!showAddBet);
+    selectedBettor?.id === bettor?.id
+      ? setShowAddBet(false)
+      : setShowAddBet(true);
+
+    // setShowAddBet(selectedBettor?.id === bettor?.id ? !showAddBet : showAddBet);
+    // setShowAddBet(!showAddBet);
     setShowAddBettor(false);
     setShowAddPayment(false);
     setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
