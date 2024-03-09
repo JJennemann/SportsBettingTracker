@@ -55,8 +55,16 @@ export default function App() {
   }
 
   function handleShowBettorHistory(bettor) {
-    setShowBettorHistory(!showBettorHistory);
+    setShowBettorHistory(true);
+    setSelectedBettor(bettor);
+
+    // setShowBettorHistory(!showBettorHistory);
     // setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
+  }
+
+  function handleCloseShowBettorHistory() {
+    setShowBettorHistory(false);
+    setSelectedBettor(null);
   }
 
   function handleShowAddPayment(bettor) {
@@ -71,10 +79,6 @@ export default function App() {
       setShowAddBet(false);
       setSelectedBettor(bettor);
     }
-
-    // setShowAddBettor(false);
-    // setShowAddBet(false);
-    // setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
   }
 
   function handleShowAddBet(bettor) {
@@ -89,22 +93,17 @@ export default function App() {
       setShowAddPayment(false);
       setSelectedBettor(bettor);
     }
-
-    // selectedBettor?.id === bettor?.id
-    //   ? setShowAddBet(false)
-    //   : setShowAddBet(true);
-    // // setShowAddBet(selectedBettor?.id === bettor?.id ? !showAddBet : showAddBet);
-    // // setShowAddBet(!showAddBet);
-    // setShowAddBettor(false);
-    // setShowAddPayment(false);
-    // setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
   }
 
   return (
     <div>
       {showBettorHistory ? (
         <div className="bettor-history">
-          <BettorHistory onShowBettorHistory={handleShowBettorHistory} />
+          <BettorHistory
+            onShowBettorHistory={handleShowBettorHistory}
+            onCloseShowBettorHistory={handleCloseShowBettorHistory}
+            selectedBettor={selectedBettor}
+          />
         </div>
       ) : (
         <div className="app">
@@ -381,9 +380,14 @@ function FormAddBet({ selectedBettor }) {
   );
 }
 
-function BettorHistory({ onShowBettorHistory }) {
+function BettorHistory({
+  onShowBettorHistory,
+  selectedBettor,
+  onCloseShowBettorHistory,
+}) {
   return (
     <div className="bettor-history-table">
+      <label> {selectedBettor.name}'s Bettor History</label>
       <table>
         <thead>
           <tr>
@@ -420,7 +424,7 @@ function BettorHistory({ onShowBettorHistory }) {
           </tr>
         </tbody>
       </table>
-      <Button onClick={() => onShowBettorHistory()}>
+      <Button onClick={() => onCloseShowBettorHistory()}>
         {" "}
         Close Bettor History{" "}
       </Button>
