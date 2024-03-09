@@ -70,6 +70,11 @@ form {
   border: 2px solid black;
 }
 
+#selected,
+.sidebar li:hover {
+  background-color: #ffe8cc;
+}
+
 /* :root {
   --color-lightest: #fff4e6;
   --color-light: #ffe8cc;

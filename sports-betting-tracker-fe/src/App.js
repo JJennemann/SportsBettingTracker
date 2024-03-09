@@ -41,6 +41,7 @@ export default function App() {
   const [showBettorHistory, setShowBettorHistory] = useState(false);
   const [showAddPayment, setShowAddPayment] = useState(false);
   const [showAddBet, setShowAddBet] = useState(false);
+  const [selectedBettor, setSelectedBettor] = useState(null);
 
   function handleShowAddBettor() {
     setShowAddBettor((show) => !show);
@@ -53,27 +54,56 @@ export default function App() {
     setShowAddBettor(!showBettorHistory);
   }
 
-  function handleShowBettorHistory() {
-    setShowBettorHistory(!showBettorHistory);
+  function handleShowBettorHistory(bettor) {
+    setShowBettorHistory(true);
+    setSelectedBettor(bettor);
+
+    // setShowBettorHistory(!showBettorHistory);
+    // setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
   }
 
-  function handleShowAddPayment() {
-    setShowAddPayment(!showAddPayment);
-    setShowAddBettor(false);
-    setShowAddBet(false);
+  function handleCloseShowBettorHistory() {
+    setShowBettorHistory(false);
+    setSelectedBettor(null);
   }
 
-  function handleShowAddBet() {
-    setShowAddBet(!showAddBet);
-    setShowAddBettor(false);
-    setShowAddPayment(false);
+  function handleShowAddPayment(bettor) {
+    if (selectedBettor?.id === bettor.id && showAddPayment) {
+      // Close the component and set selectedBettor to null
+      setShowAddPayment(false);
+      setSelectedBettor(null);
+    } else {
+      // Open the component and set selectedBettor to the current bettor
+      setShowAddPayment(true);
+      setShowAddBettor(false); // Close other components
+      setShowAddBet(false);
+      setSelectedBettor(bettor);
+    }
+  }
+
+  function handleShowAddBet(bettor) {
+    if (selectedBettor?.id === bettor.id && showAddBet) {
+      // Close the component and set selectedBettor to null
+      setShowAddBet(false);
+      setSelectedBettor(null);
+    } else {
+      // Open the component and set selectedBettor to the current bettor
+      setShowAddBet(true);
+      setShowAddBettor(false); // Close other components
+      setShowAddPayment(false);
+      setSelectedBettor(bettor);
+    }
   }
 
   return (
     <div>
       {showBettorHistory ? (
         <div className="bettor-history">
-          <BettorHistory onShowBettorHistory={handleShowBettorHistory} />
+          <BettorHistory
+            onShowBettorHistory={handleShowBettorHistory}
+            onCloseShowBettorHistory={handleCloseShowBettorHistory}
+            selectedBettor={selectedBettor}
+          />
         </div>
       ) : (
         <div className="app">
@@ -85,6 +115,7 @@ export default function App() {
               onShowAddBet={handleShowAddBet}
               showAddBet={showAddBet}
               showAddPayment={showAddPayment}
+              selectedBettor={selectedBettor}
             />
 
             {showAddBettor && <FormAddBettor onAddBettor={handleAddBettor} />}
@@ -96,11 +127,21 @@ export default function App() {
 
           <div className="forms">
             {showAddPayment ? (
-              <FormAddPayment onShowAddPayment={handleShowAddPayment} />
+              <FormAddPayment
+                onShowAddPayment={handleShowAddPayment}
+                selectedBettor={selectedBettor}
+              />
             ) : (
               ""
             )}
-            {showAddBet ? <FormAddBet onShowAddBet={handleShowAddBet} /> : ""}
+            {showAddBet ? (
+              <FormAddBet
+                onShowAddBet={handleShowAddBet}
+                selectedBettor={selectedBettor}
+              />
+            ) : (
+              ""
+            )}
           </div>
         </div>
       )}
@@ -115,6 +156,7 @@ function BettorList({
   onShowAddPayment,
   showAddBet,
   showAddPayment,
+  selectedBettor,
 }) {
   return (
     <ul>
@@ -125,6 +167,9 @@ function BettorList({
           onShowAddBet={onShowAddBet}
           onShowAddPayment={onShowAddPayment}
           key={bettor.id}
+          selectedBettor={selectedBettor}
+          showAddBet={showAddBet}
+          showAddPayment={showAddPayment}
         />
       ))}
     </ul>
@@ -138,9 +183,11 @@ function Bettor({
   onShowAddBet,
   showAddPayment,
   showAddBet,
+  selectedBettor,
 }) {
+  const isSelected = selectedBettor?.id === bettor.id;
   return (
-    <li className="bettor">
+    <li className="bettor" id={isSelected ? "selected" : ""}>
       <div className="bettor-heading">
         <img className="avatar" src={bettor.avatar} alt={bettor.name} />
         <div className="bettor-name-record">
@@ -188,9 +235,15 @@ function Bettor({
         </p>
       </div>
       <div className="bettor-buttons">
-        <Button onClick={() => onShowAddBet()}>Add Bet</Button>
-        <Button onClick={() => onShowAddPayment()}>Add Payment</Button>
-        <Button onClick={() => onShowBettorHistory()}>Bettor History</Button>
+        <Button onClick={() => onShowAddBet(bettor)}>
+          {isSelected && showAddBet ? "Close" : "Add Bet"}
+        </Button>
+        <Button onClick={() => onShowAddPayment(bettor)}>
+          {isSelected && showAddPayment ? "Close" : "Add Payment"}
+        </Button>
+        <Button onClick={() => onShowBettorHistory(bettor)}>
+          Bettor History
+        </Button>
       </div>
     </li>
   );
@@ -245,10 +298,20 @@ function FormAddBettor({ onAddBettor }) {
   );
 }
 
-function FormAddPayment() {
+function FormAddPayment({ selectedBettor }) {
   return (
     <form className="form-edit-balance">
-      <p>Amount Owed: X</p>
+      <label className="form-add-new-bet-title">
+        Add Payment for {selectedBettor.name}
+      </label>
+      <p>
+        Amount Owed by Bettor: $
+        {selectedBettor.currentBalance < 0 ? selectedBettor.currentBalance : 0}
+      </p>
+      <p>
+        Amount Owed to Bettor: $
+        {selectedBettor.currentBalance > 0 ? selectedBettor.currentBalance : 0}{" "}
+      </p>
       <select>
         <option>Payment from Bettor</option>
         <option>Payout to Bettor</option>
@@ -263,9 +326,12 @@ function FormAddPayment() {
   );
 }
 
-function FormAddBet() {
+function FormAddBet({ selectedBettor }) {
   return (
     <form className="form-add-new-bet">
+      <label className="form-add-new-bet-title">
+        Add Bet for {selectedBettor.name}
+      </label>
       <label>
         League
         <select>
@@ -314,9 +380,14 @@ function FormAddBet() {
   );
 }
 
-function BettorHistory({ onShowBettorHistory }) {
+function BettorHistory({
+  onShowBettorHistory,
+  selectedBettor,
+  onCloseShowBettorHistory,
+}) {
   return (
     <div className="bettor-history-table">
+      <label> {selectedBettor.name}'s Bettor History</label>
       <table>
         <thead>
           <tr>
@@ -353,7 +424,7 @@ function BettorHistory({ onShowBettorHistory }) {
           </tr>
         </tbody>
       </table>
-      <Button onClick={() => onShowBettorHistory()}>
+      <Button onClick={() => onCloseShowBettorHistory()}>
         {" "}
         Close Bettor History{" "}
       </Button>
