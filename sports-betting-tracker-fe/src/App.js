@@ -56,6 +56,9 @@ export default function App() {
 
   function handleShowBettorHistory(bettor) {
     setShowBettorHistory(true);
+    setShowAddBet(false);
+    setShowAddBettor(false);
+    setShowAddPayment(false);
     setSelectedBettor(bettor);
 
     // setShowBettorHistory(!showBettorHistory);
