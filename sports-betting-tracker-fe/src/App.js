@@ -51,7 +51,7 @@ export default function App() {
 
   function handleAddBettor(bettor) {
     setBettors((bettors) => [...bettors, bettor]);
-    setShowAddBettor(!showBettorHistory);
+    setShowAddBettor(false);
   }
 
   function handleShowBettorHistory(bettor) {
