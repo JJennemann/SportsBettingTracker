@@ -169,6 +169,8 @@ function BettorList({
           onShowAddPayment={onShowAddPayment}
           key={bettor.id}
           selectedBettor={selectedBettor}
+          showAddBet={showAddBet}
+          showAddPayment={showAddPayment}
         />
       ))}
     </ul>
@@ -234,8 +236,12 @@ function Bettor({
         </p>
       </div>
       <div className="bettor-buttons">
-        <Button onClick={() => onShowAddBet(bettor)}>Add Bet</Button>
-        <Button onClick={() => onShowAddPayment(bettor)}>Add Payment</Button>
+        <Button onClick={() => onShowAddBet(bettor)}>
+          {isSelected && showAddBet ? "Close" : "Add Bet"}
+        </Button>
+        <Button onClick={() => onShowAddPayment(bettor)}>
+          {isSelected && showAddPayment ? "Close" : "Add Payment"}
+        </Button>
         <Button onClick={() => onShowBettorHistory(bettor)}>
           Bettor History
         </Button>
