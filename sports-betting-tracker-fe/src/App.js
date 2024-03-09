@@ -60,24 +60,44 @@ export default function App() {
   }
 
   function handleShowAddPayment(bettor) {
-    selectedBettor?.id === bettor?.id
-      ? setShowAddPayment(false)
-      : setShowAddPayment(true);
-    setShowAddBettor(false);
-    setShowAddBet(false);
-    setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
+    if (selectedBettor?.id === bettor.id && showAddPayment) {
+      // Close the component and set selectedBettor to null
+      setShowAddPayment(false);
+      setSelectedBettor(null);
+    } else {
+      // Open the component and set selectedBettor to the current bettor
+      setShowAddPayment(true);
+      setShowAddBettor(false); // Close other components
+      setShowAddBet(false);
+      setSelectedBettor(bettor);
+    }
+
+    // setShowAddBettor(false);
+    // setShowAddBet(false);
+    // setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
   }
 
   function handleShowAddBet(bettor) {
-    selectedBettor?.id === bettor?.id
-      ? setShowAddBet(false)
-      : setShowAddBet(true);
+    if (selectedBettor?.id === bettor.id && showAddBet) {
+      // Close the component and set selectedBettor to null
+      setShowAddBet(false);
+      setSelectedBettor(null);
+    } else {
+      // Open the component and set selectedBettor to the current bettor
+      setShowAddBet(true);
+      setShowAddBettor(false); // Close other components
+      setShowAddPayment(false);
+      setSelectedBettor(bettor);
+    }
 
-    // setShowAddBet(selectedBettor?.id === bettor?.id ? !showAddBet : showAddBet);
-    // setShowAddBet(!showAddBet);
-    setShowAddBettor(false);
-    setShowAddPayment(false);
-    setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
+    // selectedBettor?.id === bettor?.id
+    //   ? setShowAddBet(false)
+    //   : setShowAddBet(true);
+    // // setShowAddBet(selectedBettor?.id === bettor?.id ? !showAddBet : showAddBet);
+    // // setShowAddBet(!showAddBet);
+    // setShowAddBettor(false);
+    // setShowAddPayment(false);
+    // setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
   }
 
   return (
@@ -276,6 +296,9 @@ function FormAddBettor({ onAddBettor }) {
 function FormAddPayment({ selectedBettor }) {
   return (
     <form className="form-edit-balance">
+      <label className="form-add-new-bet-title">
+        Add Payment for {selectedBettor.name}
+      </label>
       <p>
         Amount Owed by Bettor: $
         {selectedBettor.currentBalance < 0 ? selectedBettor.currentBalance : 0}
