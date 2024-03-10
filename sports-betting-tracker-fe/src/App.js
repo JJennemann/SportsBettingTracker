@@ -7,7 +7,17 @@ const initialBettors = [
     avatar: "https://i.pravatar.cc/48?u=118836",
     record: "0-32-5",
     currentBalance: -1000,
-    allTimeBalance: -5000,
+    allTimeWinnings: -5000,
+    paymentHistory: [
+      {
+        id: 1,
+        date: new Date(),
+        paymentType: "payment",
+        paymentAmount: 100,
+        beginningBalance: -1100,
+        endingBalance: -1000,
+      },
+    ],
   },
   {
     id: 2,
@@ -15,7 +25,17 @@ const initialBettors = [
     avatar: "https://i.pravatar.cc/48?u=123423",
     record: "32-4-5",
     currentBalance: 10000,
-    allTimeBalance: 15000,
+    allTimeWinnings: 15000,
+    paymentHistory: [
+      {
+        id: 1,
+        date: new Date(),
+        paymentType: "payout",
+        paymentAmount: 1000,
+        beginningBalance: 11000,
+        endingBalance: 10000,
+      },
+    ],
   },
   {
     id: 3,
@@ -23,7 +43,17 @@ const initialBettors = [
     avatar: "https://i.pravatar.cc/48?u=1534534",
     record: "10-10-10",
     currentBalance: 0,
-    allTimeBalance: 300,
+    allTimeWinnings: 300,
+    paymentHistory: [
+      {
+        id: 1,
+        date: new Date(),
+        paymentType: "payout",
+        paymentAmount: 1000,
+        beginningBalance: 1300,
+        endingBalance: 300,
+      },
+    ],
   },
 ];
 
@@ -42,6 +72,7 @@ export default function App() {
   const [showAddPayment, setShowAddPayment] = useState(false);
   const [showAddBet, setShowAddBet] = useState(false);
   const [selectedBettor, setSelectedBettor] = useState(null);
+  const [paymentAmount, setPaymentAmount] = useState(0);
 
   function handleShowAddBettor() {
     setShowAddBettor((show) => !show);
@@ -60,9 +91,6 @@ export default function App() {
     setShowAddBettor(false);
     setShowAddPayment(false);
     setSelectedBettor(bettor);
-
-    // setShowBettorHistory(!showBettorHistory);
-    // setSelectedBettor((cur) => (cur?.id === bettor.id ? null : bettor));
   }
 
   function handleCloseShowBettorHistory() {
@@ -96,6 +124,47 @@ export default function App() {
       setShowAddPayment(false);
       setSelectedBettor(bettor);
     }
+  }
+
+  function handleMakePayment(paymentAmountInput) {
+    setPaymentAmount(paymentAmountInput);
+
+    const beginningBalance = selectedBettor.currentBalance;
+
+    const id = crypto.randomUUID();
+
+    const updatedBalance =
+      selectedBettor.currentBalance > 0
+        ? selectedBettor.currentBalance - paymentAmountInput
+        : selectedBettor.currentBalance + paymentAmountInput;
+
+    const paymentType =
+      selectedBettor.currentBalance > 0 ? "Payout" : "Payment";
+
+    const newPaymentEntry = {
+      id: id,
+      date: new Date(),
+      paymentType: paymentType,
+      paymentAmount: paymentAmountInput,
+      beginningBalance: beginningBalance,
+      endingBalance: updatedBalance,
+    };
+
+    setBettors((bettors) =>
+      bettors.map((bettor) =>
+        bettor.id === selectedBettor.id
+          ? {
+              ...bettor,
+              currentBalance: updatedBalance,
+              paymentHistory: [...bettor.paymentHistory, newPaymentEntry],
+            }
+          : bettor
+      )
+    );
+
+    setShowAddPayment(false);
+    setSelectedBettor(null);
+    setPaymentAmount(0);
   }
 
   return (
@@ -133,6 +202,8 @@ export default function App() {
               <FormAddPayment
                 onShowAddPayment={handleShowAddPayment}
                 selectedBettor={selectedBettor}
+                paymentAmount={paymentAmount}
+                onMakePayment={handleMakePayment}
               />
             ) : (
               ""
@@ -220,20 +291,20 @@ function Bettor({
         </p>
 
         <p className="all-time-balance">
-          <b> All-Time Balance: </b>
+          <b> All-Time Winnings: </b>
           <span
             className={
-              bettor.allTimeBalance < 0
+              bettor.allTimeWinnings < 0
                 ? "red"
-                : bettor.allTimeBalance > 0
+                : bettor.allTimeWinnings > 0
                 ? "green"
                 : ""
             }
           >
             {" "}
             {bettor.allTimeBalance < 0
-              ? `-$${Math.abs(bettor.allTimeBalance)}`
-              : `$${Math.abs(bettor.allTimeBalance)}`}
+              ? `-$${Math.abs(bettor.allTimeWinnings)}`
+              : `$${Math.abs(bettor.allTimeWinnings)}`}
           </span>
         </p>
       </div>
@@ -301,29 +372,87 @@ function FormAddBettor({ onAddBettor }) {
   );
 }
 
-function FormAddPayment({ selectedBettor }) {
+function FormAddPayment({ selectedBettor, paymentAmount, onMakePayment }) {
+  const [formUpdatedBalance, setFormUpdatedBalance] = useState(
+    selectedBettor.currentBalance
+  );
+
+  function handleFormUpdatedBalance(paymentInput) {
+    const paymentAmountInput = Number(paymentInput);
+
+    if (
+      Math.abs(paymentAmountInput) > Math.abs(selectedBettor.currentBalance)
+    ) {
+      setFormUpdatedBalance(selectedBettor.currentBalance);
+    } else {
+      let updatedBalance;
+      if (selectedBettor.currentBalance > 0) {
+        updatedBalance = selectedBettor.currentBalance - paymentAmountInput;
+      } else {
+        updatedBalance = selectedBettor.currentBalance + paymentAmountInput;
+      }
+      setFormUpdatedBalance(updatedBalance);
+    }
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const paymentAmountInput = Number(
+      e.target.elements.paymentAmountInputField.value
+    );
+    onMakePayment(paymentAmountInput);
+  }
+
   return (
-    <form className="form-edit-balance">
+    <form className="form-edit-balance" onSubmit={handleSubmit}>
       <label className="form-add-new-bet-title">
         Add Payment for {selectedBettor.name}
       </label>
       <p>
-        Amount Owed by Bettor: $
-        {selectedBettor.currentBalance < 0 ? selectedBettor.currentBalance : 0}
+        Bettors Current Balance:
+        <span
+          className={
+            selectedBettor.currentBalance < 0
+              ? "red"
+              : selectedBettor.currentBalance > 0
+              ? "green"
+              : ""
+          }
+        >
+          ${selectedBettor.currentBalance}
+        </span>
       </p>
-      <p>
-        Amount Owed to Bettor: $
-        {selectedBettor.currentBalance > 0 ? selectedBettor.currentBalance : 0}{" "}
-      </p>
-      <select>
-        <option>Payment from Bettor</option>
-        <option>Payout to Bettor</option>
-      </select>
+
       <label>
-        Payment Amount
-        <input type="text" />
+        Payment Amount: $
+        <input
+          type="number"
+          name="paymentAmountInputField"
+          onChange={(e) => handleFormUpdatedBalance(e.target.value)}
+          onInput={(e) => {
+            e.target.value = Math.abs(parseInt(e.target.value))
+              .toString()
+              .slice(
+                0,
+                Math.abs(selectedBettor.currentBalance).toString().length
+              );
+          }}
+        />
       </label>
-      <p>Updated Balance: X</p>
+      <p>
+        Updated Balance:
+        <span
+          className={
+            selectedBettor.currentBalance < 0
+              ? "red"
+              : selectedBettor.currentBalance > 0
+              ? "green"
+              : ""
+          }
+        >
+          ${formUpdatedBalance}
+        </span>
+      </p>
       <Button>Save Payment</Button>
     </form>
   );
