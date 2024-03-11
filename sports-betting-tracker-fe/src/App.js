@@ -1,4 +1,9 @@
 import { useState } from "react";
+import { BettorList } from "./BettorList";
+import { FormAddBettor } from "./FormAddBettor";
+import { FormAddPayment } from "./FormAddPayment";
+import { FormAddBet } from "./FormAddBet";
+import { BettorHistory } from "./BettorHistory";
 
 const initialBettors = [
   {
@@ -57,13 +62,13 @@ const initialBettors = [
   },
 ];
 
-function Button({ children, onClick }) {
-  return (
-    <button className="button" onClick={onClick}>
-      {children}
-    </button>
-  );
-}
+// export function Button({ children, onClick }) {
+//   return (
+//     <button className="button" onClick={onClick}>
+//       {children}
+//     </button>
+//   );
+// }
 
 export default function App() {
   const [bettors, setBettors] = useState(initialBettors);
@@ -192,9 +197,9 @@ export default function App() {
 
             {showAddBettor && <FormAddBettor onAddBettor={handleAddBettor} />}
 
-            <Button onClick={handleShowAddBettor}>
+            <button onClick={handleShowAddBettor}>
               {showAddBettor ? "Close" : "Add Bettor"}
-            </Button>
+            </button>
           </div>
 
           <div className="forms">
@@ -219,349 +224,6 @@ export default function App() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function BettorList({
-  bettors,
-  onShowBettorHistory,
-  onShowAddBet,
-  onShowAddPayment,
-  showAddBet,
-  showAddPayment,
-  selectedBettor,
-}) {
-  return (
-    <ul>
-      {bettors.map((bettor) => (
-        <Bettor
-          bettor={bettor}
-          onShowBettorHistory={onShowBettorHistory}
-          onShowAddBet={onShowAddBet}
-          onShowAddPayment={onShowAddPayment}
-          key={bettor.id}
-          selectedBettor={selectedBettor}
-          showAddBet={showAddBet}
-          showAddPayment={showAddPayment}
-        />
-      ))}
-    </ul>
-  );
-}
-
-function Bettor({
-  bettor,
-  onShowBettorHistory,
-  onShowAddPayment,
-  onShowAddBet,
-  showAddPayment,
-  showAddBet,
-  selectedBettor,
-}) {
-  const isSelected = selectedBettor?.id === bettor.id;
-  return (
-    <li className="bettor" id={isSelected ? "selected" : ""}>
-      <div className="bettor-heading">
-        <img className="avatar" src={bettor.avatar} alt={bettor.name} />
-        <div className="bettor-name-record">
-          <h3 className="bettor-name">{bettor.name}</h3>
-          <h4 className="bettor-record">({bettor.record})</h4>
-        </div>
-      </div>
-
-      <div className="bettor-balance-data">
-        <p className="current-balance">
-          <b> Current Balance: </b>
-
-          <span
-            className={
-              bettor.currentBalance < 0
-                ? "red"
-                : bettor.currentBalance > 0
-                ? "green"
-                : ""
-            }
-          >
-            {" "}
-            {bettor.currentBalance < 0
-              ? `-$${Math.abs(bettor.currentBalance)}`
-              : `$${Math.abs(bettor.currentBalance)}`}
-          </span>
-        </p>
-
-        <p className="all-time-balance">
-          <b> All-Time Winnings: </b>
-          <span
-            className={
-              bettor.allTimeWinnings < 0
-                ? "red"
-                : bettor.allTimeWinnings > 0
-                ? "green"
-                : ""
-            }
-          >
-            {" "}
-            {bettor.allTimeBalance < 0
-              ? `-$${Math.abs(bettor.allTimeWinnings)}`
-              : `$${Math.abs(bettor.allTimeWinnings)}`}
-          </span>
-        </p>
-      </div>
-      <div className="bettor-buttons">
-        <Button onClick={() => onShowAddBet(bettor)}>
-          {isSelected && showAddBet ? "Close" : "Add Bet"}
-        </Button>
-        <Button onClick={() => onShowAddPayment(bettor)}>
-          {isSelected && showAddPayment ? "Close" : "Add Payment"}
-        </Button>
-        <Button onClick={() => onShowBettorHistory(bettor)}>
-          Bettor History
-        </Button>
-      </div>
-    </li>
-  );
-}
-
-function FormAddBettor({ onAddBettor }) {
-  const [name, setName] = useState("");
-  const [avatar, setAvatar] = useState("https://i.pravatar.cc/48");
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    if (!name || !avatar) return;
-
-    const id = crypto.randomUUID();
-    const newBettor = {
-      id: id,
-      name,
-      avatar: `${avatar}?=${id}`,
-      record: "0-0-0",
-      currentBalance: 0,
-      allTimeBalance: 0,
-    };
-
-    console.log(newBettor);
-    onAddBettor(newBettor);
-
-    setName("");
-    setAvatar("https://i.pravatar.cc/48");
-  }
-
-  return (
-    <form className="form-add-bettor" onSubmit={handleSubmit}>
-      <label>
-        Bettor Name
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </label>
-      <label>
-        Avatar URL
-        <input
-          type="text"
-          value={avatar}
-          onChange={(e) => setAvatar(e.target.value)}
-        />
-      </label>
-      <Button>Save Bettor</Button>
-    </form>
-  );
-}
-
-function FormAddPayment({ selectedBettor, paymentAmount, onMakePayment }) {
-  const [formUpdatedBalance, setFormUpdatedBalance] = useState(
-    selectedBettor.currentBalance
-  );
-
-  function handleFormUpdatedBalance(paymentInput) {
-    const paymentAmountInput = Number(paymentInput);
-
-    if (
-      Math.abs(paymentAmountInput) > Math.abs(selectedBettor.currentBalance)
-    ) {
-      setFormUpdatedBalance(selectedBettor.currentBalance);
-    } else {
-      let updatedBalance;
-      if (selectedBettor.currentBalance > 0) {
-        updatedBalance = selectedBettor.currentBalance - paymentAmountInput;
-      } else {
-        updatedBalance = selectedBettor.currentBalance + paymentAmountInput;
-      }
-      setFormUpdatedBalance(updatedBalance);
-    }
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    const paymentAmountInput = Number(
-      e.target.elements.paymentAmountInputField.value
-    );
-    onMakePayment(paymentAmountInput);
-  }
-
-  return (
-    <form className="form-edit-balance" onSubmit={handleSubmit}>
-      <label className="form-add-new-bet-title">
-        Add Payment for {selectedBettor.name}
-      </label>
-      <p>
-        Bettors Current Balance:
-        <span
-          className={
-            selectedBettor.currentBalance < 0
-              ? "red"
-              : selectedBettor.currentBalance > 0
-              ? "green"
-              : ""
-          }
-        >
-          ${selectedBettor.currentBalance}
-        </span>
-      </p>
-
-      <label>
-        Payment Amount: $
-        <input
-          type="number"
-          name="paymentAmountInputField"
-          onChange={(e) => handleFormUpdatedBalance(e.target.value)}
-          onInput={(e) => {
-            e.target.value = Math.abs(parseInt(e.target.value))
-              .toString()
-              .slice(
-                0,
-                Math.abs(selectedBettor.currentBalance).toString().length
-              );
-          }}
-        />
-      </label>
-      <p>
-        Updated Balance:
-        <span
-          className={
-            selectedBettor.currentBalance < 0
-              ? "red"
-              : selectedBettor.currentBalance > 0
-              ? "green"
-              : ""
-          }
-        >
-          ${formUpdatedBalance}
-        </span>
-      </p>
-      <Button>Save Payment</Button>
-    </form>
-  );
-}
-
-function FormAddBet({ selectedBettor }) {
-  return (
-    <form className="form-add-new-bet">
-      <label className="form-add-new-bet-title">
-        Add Bet for {selectedBettor.name}
-      </label>
-      <label>
-        League
-        <select>
-          <option>NFL</option>
-          <option>NCAAF</option>
-        </select>
-      </label>
-      <label>
-        Home Team
-        <select>
-          <option>Test</option>
-          <option>Test2</option>
-        </select>
-      </label>
-      <label>
-        Away Team
-        <select>
-          <option>Test</option>
-          <option>Test2</option>
-        </select>
-      </label>
-      <label>
-        Bet Type
-        <select>
-          <option>Spread</option>
-          <option>O/U</option>
-        </select>
-      </label>
-      <label>
-        Betting Line
-        <input type="text" />
-      </label>
-      <label>
-        Odds
-        <input type="text" />
-      </label>
-      <label>
-        Bet Amount
-        <input type="text" />
-      </label>
-      <p>Win Pays Out: X</p>
-      <p>Loss Cost: X</p>
-      <p>Push Cost: X</p>
-      <Button>Add Bet</Button>
-    </form>
-  );
-}
-
-function BettorHistory({
-  onShowBettorHistory,
-  selectedBettor,
-  onCloseShowBettorHistory,
-}) {
-  return (
-    <div className="bettor-history-table">
-      <label> {selectedBettor.name}'s Bettor History</label>
-      <table>
-        <thead>
-          <tr>
-            <th>Transaction Type</th>
-            <th>Date</th>
-            <th>Home Team</th>
-            <th>Away Team</th>
-            <th>Bet Result</th>
-            <th>Bet Type</th>
-            <th>Betting Line</th>
-            <th>Odds</th>
-            <th>Bet Amount</th>
-            <th>Winnings</th>
-            <th>Payment/Payout Amount</th>
-            <th>Balance</th>
-            <th>W-L-P</th>
-          </tr>
-        </thead>
-        <tbody>
-          {selectedBettor.paymentHistory.map((payment) => (
-            <tr>
-              <td>{payment.paymentType}</td>
-              <td>selected.date</td>
-              <td>selected.homeTeam</td>
-              <td>selected.awayTeam</td>
-              <td>selected.betResult</td>
-              <td>selected.betType</td>
-              <td>selected.bettingLine</td>
-              <td>selected.odds</td>
-              <td>selected.betAmount</td>
-              <td>selected.winnings</td>
-              <td>{payment.paymentAmount}</td>
-              <td>selected.balance</td>
-              <td>selected.record</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <Button onClick={() => onCloseShowBettorHistory()}>
-        {" "}
-        Close Bettor History{" "}
-      </Button>
     </div>
   );
 }
