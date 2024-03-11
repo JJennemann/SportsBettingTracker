@@ -12,7 +12,7 @@ const initialBettors = [
       {
         id: 1,
         date: new Date(),
-        paymentType: "payment",
+        paymentType: "Payment",
         paymentAmount: 100,
         beginningBalance: -1100,
         endingBalance: -1000,
@@ -30,7 +30,7 @@ const initialBettors = [
       {
         id: 1,
         date: new Date(),
-        paymentType: "payout",
+        paymentType: "Payout",
         paymentAmount: 1000,
         beginningBalance: 11000,
         endingBalance: 10000,
@@ -48,7 +48,7 @@ const initialBettors = [
       {
         id: 1,
         date: new Date(),
-        paymentType: "payout",
+        paymentType: "Payout",
         paymentAmount: 1000,
         beginningBalance: 1300,
         endingBalance: 300,
@@ -539,21 +539,23 @@ function BettorHistory({
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>selected.transactionType</td>
-            <td>selected.date</td>
-            <td>selected.homeTeam</td>
-            <td>selected.awayTeam</td>
-            <td>selected.betResult</td>
-            <td>selected.betType</td>
-            <td>selected.bettingLine</td>
-            <td>selected.odds</td>
-            <td>selected.betAmount</td>
-            <td>selected.winnings</td>
-            <td>selected.payment</td>
-            <td>selected.balance</td>
-            <td>selected.record</td>
-          </tr>
+          {selectedBettor.paymentHistory.map((payment) => (
+            <tr>
+              <td>{payment.paymentType}</td>
+              <td>selected.date</td>
+              <td>selected.homeTeam</td>
+              <td>selected.awayTeam</td>
+              <td>selected.betResult</td>
+              <td>selected.betType</td>
+              <td>selected.bettingLine</td>
+              <td>selected.odds</td>
+              <td>selected.betAmount</td>
+              <td>selected.winnings</td>
+              <td>{payment.paymentAmount}</td>
+              <td>selected.balance</td>
+              <td>selected.record</td>
+            </tr>
+          ))}
         </tbody>
       </table>
       <Button onClick={() => onCloseShowBettorHistory()}>
