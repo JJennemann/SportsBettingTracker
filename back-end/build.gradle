@@ -33,6 +33,13 @@ dependencies {
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
 	testImplementation 'org.mockito:mockito-junit-jupiter:4.8.1'
 
+	implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+	compileOnly 'org.projectlombok:lombok:1.18.26'
+	annotationProcessor 'org.projectlombok:lombok:1.18.26'
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	testCompileOnly 'org.projectlombok:lombok:1.18.26'
+	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 
 }
 
