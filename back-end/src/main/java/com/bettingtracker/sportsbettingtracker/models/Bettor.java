@@ -2,7 +2,7 @@ package com.bettingtracker.sportsbettingtracker.models;
 
 import java.util.Objects;
 
-public class BettorModel {
+public class Bettor {
 
     private Integer id;
 
@@ -18,20 +18,19 @@ public class BettorModel {
     private Double currentBalance;
     private Double allTimeBalance;
 
-    public BettorModel(){}
+    public Bettor(){}
 
-    public BettorModel(String firstName, String lastName, String email, String avatar, Integer betsWon, Integer betsLost,
-                       Integer betsPushed, Double currentBalance, Double allTimeBalance) {
+
+
+    public Bettor(String firstName, String lastName, String email, String avatar) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.avatar = avatar;
-        this.betsWon = betsWon;
-        this.betsLost = betsLost;
-        this.betsPushed = betsPushed;
-        this.currentBalance = currentBalance;
-        this.allTimeBalance = allTimeBalance;
+
     }
+
+
 
     public Integer getId() {
         return id;
@@ -133,7 +132,7 @@ public class BettorModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BettorModel that = (BettorModel) o;
+        Bettor that = (Bettor) o;
         return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email) && Objects.equals(avatar, that.avatar) && Objects.equals(betsWon, that.betsWon) && Objects.equals(betsLost, that.betsLost) && Objects.equals(betsPushed, that.betsPushed) && Objects.equals(currentBalance, that.currentBalance) && Objects.equals(allTimeBalance, that.allTimeBalance);
     }
 
