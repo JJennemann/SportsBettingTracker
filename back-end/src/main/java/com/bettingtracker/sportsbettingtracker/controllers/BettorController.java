@@ -1,4 +1,4 @@
 package com.bettingtracker.sportsbettingtracker.controllers;
 
-public class bettorController {
+public class BettorController {
 }
