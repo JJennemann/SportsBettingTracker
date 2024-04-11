@@ -26,24 +26,21 @@ public class Bettor {
 
     public Bettor(){}
 
-
-
-    public Bettor(String firstName, String lastName, String email, String avatar) {
+    public Bettor(String firstName, String lastName, String email, String avatar, Integer betsWon,
+                  Integer betsLost, Integer betsPushed, Double currentBalance, Double allTimeBalance) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.avatar = avatar;
-
+        this.betsWon = betsWon;
+        this.betsLost = betsLost;
+        this.betsPushed = betsPushed;
+        this.currentBalance = currentBalance;
+        this.allTimeBalance = allTimeBalance;
     }
-
-
 
     public Integer getId() {
         return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getFirstName() {

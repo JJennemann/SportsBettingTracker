@@ -31,7 +31,7 @@ public class BettorService {
     public ResponseEntity<?> createNewBettor(CreateNewBettorDTO createNewBettorDTO) {
         try {
             Bettor newBettor = new Bettor(createNewBettorDTO.getFirstName(), createNewBettorDTO.getLastName(),
-                    createNewBettorDTO.getEmail(), createNewBettorDTO.getAvatar());
+                    createNewBettorDTO.getEmail(), createNewBettorDTO.getAvatar(), 0, 0, 0, 0.0, 0.0);
 
             Bettor savedBettor = bettorRepository.save(newBettor);
 
