@@ -1,6 +1,8 @@
 package com.bettingtracker.sportsbettingtracker.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.Objects;
 
@@ -12,21 +14,26 @@ public class Bettor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank(message="First name cannot be empty")
     private String firstName;
+
+    @NotBlank(message="Last name cannot be empty")
     private String lastName;
+
+    @NotBlank(message="Email cannot be empty")
+    @Email(message="Email should be valid")
     private String email;
+
     private String avatar;
 
-    private Integer betsWon;
-    private Integer betsLost;
-    private Integer betsPushed;
+    private Integer betsWon = 0;
+    private Integer betsLost = 0;
+    private Integer betsPushed = 0;
 
-    private Double currentBalance;
-    private Double allTimeBalance;
+    private Double currentBalance = 0.0;
+    private Double allTimeBalance = 0.0;
 
     public Bettor(){}
-
-
 
     public Bettor(String firstName, String lastName, String email, String avatar) {
         this.firstName = firstName;
@@ -36,14 +43,8 @@ public class Bettor {
 
     }
 
-
-
     public Integer getId() {
         return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getFirstName() {
