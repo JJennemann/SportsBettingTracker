@@ -1,24 +1,27 @@
 package com.bettingtracker.sportsbettingtracker.dtos;
 
-import com.bettingtracker.sportsbettingtracker.models.Bettor;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
-public class CreateNewBettorResponseDTO {
-    private Integer id;
+public class UpdatedBettorDTO {
+
     private String firstName;
+
     private String lastName;
+
+    @Email(message="Email should be valid")
     private String email;
+
     private String avatar;
 
-    public CreateNewBettorResponseDTO(Bettor bettor) {
-        this.id = bettor.getId();
-        this.firstName = bettor.getFirstName();
-        this.lastName = bettor.getLastName();
-        this.email = bettor.getEmail();
-        this.avatar = bettor.getAvatar();
+    public UpdatedBettorDTO() {
     }
 
-    public Integer getId() {
-        return id;
+    public UpdatedBettorDTO(String firstName, String lastName, String email, String avatar) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.avatar = avatar;
     }
 
     public String getFirstName() {
@@ -52,4 +55,5 @@ public class CreateNewBettorResponseDTO {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
+
 }

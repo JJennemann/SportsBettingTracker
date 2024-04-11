@@ -1,9 +1,15 @@
 package com.bettingtracker.sportsbettingtracker.models;
 
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
+@Entity
+@Table(name="bettor_data")
 public class Bettor {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String firstName;
